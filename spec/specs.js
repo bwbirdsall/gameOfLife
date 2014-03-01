@@ -1,139 +1,87 @@
 beforeEach(function() {
-  Space.all = [];
+  Cell.all = [];
 });
 
-describe('Space', function() {
-  describe('returnCoordinates', function() {
-    it('returns the coordinates x,y', function() {
-      var testSpace = Space.create(1,2);
-      testSpace.returnCoordinates().should.eql([1,2]);
+describe('Cell', function() {
+  describe('create', function() {
+    it('creates a randomly alive or dead cell', function() {
+      var testCell = Cell.create(0,0);
+      testCell.currentState.should.match(/alive|dedd/);
+      testCell.x.should.equal(0);
+      testCell.y.should.equal(0);
     });
   });
-  describe('returnValue', function() {
-    it('returns the current value at the Space: X, O or Empty', function() {
-      var testSpace = Space.create(1,2);
-      testSpace.value = 'X';
-      testSpace.returnValue().should.equal('X');
+  describe('switchState', function() {
+    it('switches a cell to its future state', function() {
+      var testCell = Cell.create(0,0);
+      testCell.futureState = "dedd";
+      testCell.switchState();
+      testCell.currentState.should.equal("dedd");
     });
-  });
-  describe('markedBy', function() {
-    it('sets the value of the Space depending on the player passed in', function() {
-      var testSpace = Space.create(1,2);
-      testSpace.markedBy('X').should.equal('X');
-    });
-    it('returns an error if the Space has already been marked', function() {
-      var testSpace = Space.create(1,2);
-      testSpace.markedBy('X');
-      testSpace.markedBy('0').should.equal('Nope');
+    it("empties the cell's future state after the switch", function() {
+      var testCell = Cell.create(0,0);
+      testCell.futureState = "dedd";
+      testCell.switchState();
+      testCell.futureState.should.equal("");
     });
   });
   describe('find', function() {
-    it('returns the Space belonging to provided coordinates', function() {
-      var testSpace = Space.create(1,2);
-      var testSpaceTwo = Space.create(1,3);
-      Space.find(1,3).should.equal(testSpaceTwo);
+    it('returns the cell at a given coordinate', function() {
+      var testCell = Cell.create(0,0);
+      Cell.find(0,0).should.eql(testCell);
+    });
+  });
+  describe('divination', function() {
+    it('sets a dead futureState for a cell with all alive neighbors', function() {
+      var testCreation = Creation.create(3);
+      Cell.all.forEach(function(cell){
+        cell.currentState = "alive";
+      });
+      var testCell = Cell.find(1,1);
+      testCell.divination();
+      testCell.futureState.should.equal('dedd');
+
+    });
+    it('sets an alive futureState for an alive cell with two alive neighbors', function() {
+      var testCreation = Creation.create(3);
+      var testCell = Cell.find(1,1);
+      for(var y = 0; y < 3; y++) {
+        Cell.find(0,y).currentState = "dedd";
+        Cell.find(1,y).currentState = "alive";
+        Cell.find(2,y).currentState = "dedd";
+      }
+      testCell.divination();
+      testCell.futureState.should.equal('alive');
+
     });
   });
 });
 
-describe('Player', function() {
-  it('returns whether the player belongs to the X or O faction', function() {
-    var newPlayer = Player.create('X');
-    newPlayer.faction.should.equal('X');
-  });
-});
-
-describe('Board', function(){
+describe('Creation', function() {
   describe('create', function() {
-    it('creates a board with 9 spaces', function() {
-      var newBoard = Board.create();
-      newBoard.boardSpaces.length = 9;
+    it('creates a square Creation of cells of the specified dimensions', function() {
+      var testCreation = Creation.create(3);
+      Cell.all.length.should.equal(9);
     });
   });
-  describe('whoIsWinner', function() {
-    it('returns the first player to mark three spaces in a row', function() {
-      var newBoard = Board.create();
-      Space.find(1,2).markedBy('X');
-      Space.find(1,1).markedBy('X');
-      Space.find(1,3).markedBy('X');
-      newBoard.whoIsWinner().should.equal('X');
+  describe('switchAroo', function() {
+    it('switches the currentStates of all cells to their futureStates', function() {
+      var testCreation = Creation.create(3);
+      Cell.all.forEach(function(cell){
+        cell.currentState = "alive";
+      });
+      var testCell = Cell.find(1,1);
+      testCreation.switchAroo();
+      testCell.currentState.should.equal('dedd');
     });
-    it('returns the winning faction for diagonal victory states', function() {
-      var newBoard = Board.create();
-      Space.find(1,1).markedBy('X');
-      Space.find(2,2).markedBy('X');
-      Space.find(3,3).markedBy('X');
-      newBoard.whoIsWinner().should.equal('X');
-    });
-  });
-});
-
-describe('Game', function() {
-  describe('create', function() {
-    it('creates a game containing a proper board', function() {
-      var newGame = Game.create('X','Y');
-      newGame.board.boardSpaces.length.should.equal(9);
-    });
-    it('creates two warring factions', function() {
-      var newGame = Game.create('X','Y');
-      newGame.playerX.faction.should.equal('X');
-      newGame.playerY.faction.should.equal('Y');
-    });
-  });
-  describe('switchTurn', function() {
-    it("switches which player's turn it is", function() {
-      var newGame = Game.create('X','Y');
-      newGame.whoseTurn = 'X';
-      newGame.switchTurn();
-      newGame.whoseTurn.should.equal('Y');
-    });
-  });
-  describe('gameOver', function() {
-    it('halts the game once a winner is determined', function() {
-      var newGame = Game.create('X','Y');
-      Space.find(1,2).markedBy('X');
-      Space.find(1,1).markedBy('X');
-      Space.find(1,3).markedBy('X');
-      newGame.gameOver().should.equal('X');
-    });
-    it('halts the game if there are no more moves left', function() {
-      var newGame = Game.create('X','Y');
-      Space.find(1,2).markedBy('A');
-      Space.find(1,1).markedBy('B');
-      Space.find(1,3).markedBy('C');
-      Space.find(2,2).markedBy('D');
-      Space.find(2,1).markedBy('E');
-      Space.find(2,3).markedBy('F');
-      Space.find(3,2).markedBy('G');
-      Space.find(3,1).markedBy('H');
-      Space.find(3,3).markedBy('I');
-      newGame.gameOver().should.equal('NOBODY WINS');
-    });
-    it('returns false for an unfinished game', function() {
-      var newGame = Game.create('X','Y');
-      newGame.gameOver().should.equal(false);
-    });
-  });
-  describe('whoStarts', function() {
-    it('returns a random game starting faction', function() {
-      var newGame = Game.create('X','Y');
-      newGame.whoseTurn.should.match(/[XY]/);
-    });
-  });
-  describe('makeMove', function() {
-    it('returns true if the move was successful', function() {
-      var newGame = Game.create('X','Y');
-      newGame.makeMove(newGame.playerX.faction, 1, 2).should.equal(true);
-    });
-    it('returns false if the move cannot be completed', function() {
-      var newGame = Game.create('X','Y');
-      Space.find(1,2).markedBy('Y');
-      newGame.makeMove(newGame.playerX.faction, 1, 2).should.equal(false);
-    });
-    it('updates space value with correct faction', function() {
-      var newGame = Game.create('X','Y');
-      newGame.makeMove(newGame.playerX.faction, 1, 2);
-      Space.find(1,2).value.should.equal("X");
+    it('switches the futureStates of all cells to an empty string', function() {
+      var testCreation = Creation.create(3);
+      Cell.all.forEach(function(cell){
+        cell.currentState = "alive";
+      });
+      var testCell = Cell.find(1,1);
+      testCreation.switchAroo();
+      testCell.futureState.should.equal('');
     });
   });
 });
