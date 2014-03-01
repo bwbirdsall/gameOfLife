@@ -91,9 +91,12 @@ $(document).ready(function() {
     var firmamentSize = $("input#new-creation-number").val();
     if(isNaN(firmamentSize)) {
       alert('You fool! Creation needs a size, not that jibberjabber!');
+    } else if (firmamentSize > 17) {
+      alert('Just kidding! Pick a smaller number, please and thank you.');
     } else {
       $("#creation-entry").hide();
       $("#creation-form").show();
+      $("#recreation-form").show();
       var newCreation = Creation.create(firmamentSize);
       $("#creation-display").text("");
 
@@ -129,6 +132,8 @@ $(document).ready(function() {
       }
 
       this.reset();
+
+
     });
   });
 });

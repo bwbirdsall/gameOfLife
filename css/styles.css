@@ -1,9 +1,36 @@
+body {
+  color: peru;
+  background-color: darkslategray;
+}
+
+#start-game {
+  padding-top: 15%;
+  width: 350px;
+  margin: 0 auto;
+  text-align: center;
+}
+
 #creation-form {
   display: none;
 }
 
+#recreation-form {
+  display: none;
+}
+
 h3 {
+  color: #333;
+  font-style: bold;
+  text-align: center;
+}
+
+h2 {
   color: peru;
   font-style: italic;
+  text-align: center;
+}
+
+#creation {
+  margin: 0 auto;
   text-align: center;
 }
