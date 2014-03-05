@@ -101,9 +101,9 @@ $(document).ready(function() {
         for(var x = 0; x < firmamentSize; x++) {
           var lifeMaybe = Cell.find(x,y);
           if (lifeMaybe.currentState === "alive") {
-            $("#creation-display").append("<span class='divineIntervention' id='" + y*100 + x + "'><img src='images/alive.png'></span>");
+            $("#creation-display").append("<span class='divineIntervention' id='" + y + "a" + x + "'><img src='images/alive.png'></span>");
           } else {
-            $("#creation-display").append("<span class='divineIntervention' id='" + y*100 + x + "'><img src='images/dedd.png'></span>");  
+            $("#creation-display").append("<span class='divineIntervention' id='" + y + "a" + x + "'><img src='images/dedd.png'></span>");  
           }
         }
         $("#creation-display").append("<br/>");
@@ -111,17 +111,17 @@ $(document).ready(function() {
     }
 
     $(".divineIntervention").click(function() {
-      var cellID = this.id;
-      var y = Math.floor(cellID/1000);
-      var x = cellID % 100;
+      var cellID = this.id.split("a");
+      var y = parseInt(cellID[0]);
+      var x = parseInt(cellID[1]);
       var lifeMaybe = Cell.find(x,y);
       if (lifeMaybe.currentState === "dedd") {
-        $("#" + cellID).text("");
-        $("#" + cellID).append('<img src="images/alive.png">');
+        $("#" + y + "a" + x).text("");
+        $("#" + y + "a" + x).append('<img src="images/alive.png">');
         lifeMaybe.currentState = "alive";
       } else {
-        $("#" + cellID).text("");
-        $("#" + cellID).append('<img src="images/dedd.png">');
+        $("#" + y + "a" + x).text("");
+        $("#" + y + "a" + x).append('<img src="images/dedd.png">');
         lifeMaybe.currentState = "dedd";  
       }
       console.log(cellID);
@@ -139,9 +139,9 @@ $(document).ready(function() {
         for(var x = 0; x < firmamentSize; x++) {
           var lifeMaybe = Cell.find(x,y);
           if (lifeMaybe.currentState === "alive") {
-            $("#creation-display").append("<span class='divineIntervention' id='" + y*100 + x + "'><img src='images/alive.png'></span>");
+            $("#creation-display").append("<span class='divineIntervention' id='" + y + "a" + x + "'><img src='images/alive.png'></span>");
           } else {
-            $("#creation-display").append("<span class='divineIntervention' id='" + y*100 + x + "'><img src='images/dedd.png'></span>");  
+            $("#creation-display").append("<span class='divineIntervention' id='" + y + "a" + x + "'><img src='images/dedd.png'></span>");  
           }
         }
         $("#creation-display").append("<br/>");
@@ -150,17 +150,17 @@ $(document).ready(function() {
       this.reset();
 
       $(".divineIntervention").click(function() {
-      var cellID = this.id;
-      var y = Math.floor(cellID/1000);
-      var x = cellID % 100;
+      var cellID = this.id.split("a");
+      var y = parseInt(cellID[0]);
+      var x = parseInt(cellID[1]);
       var lifeMaybe = Cell.find(x,y);
       if (lifeMaybe.currentState === "dedd") {
-        $("#" + cellID).text("");
-        $("#" + cellID).append('<img src="images/alive.png">');
+        $("#" + y + "a" + x).text("");
+        $("#" + y + "a" + x).append('<img src="images/alive.png">');
         lifeMaybe.currentState = "alive";
       } else {
-        $("#" + cellID).text("");
-        $("#" + cellID).append('<img src="images/dedd.png">');
+        $("#" + y + "a" + x).text("");
+        $("#" + y + "a" + x).append('<img src="images/dedd.png">');
         lifeMaybe.currentState = "dedd";  
       }
       console.log(cellID);
