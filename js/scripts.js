@@ -25,11 +25,6 @@ var Cell = {
         } else if(neighbor.currentState === "alive") {
           aliveNeighbors++;
         }
-        /*console.log("divCounter: " + divCounter);
-        console.log("this.x and this.y " + this.x + ", " + this.y);
-        console.log("Neighbor: " + neighborX + ", " + neighborY);
-        console.log("aliveNeighbors: " + aliveNeighbors);
-        debugger;*/
       }
     }
     divCounter = 0;
@@ -77,7 +72,6 @@ var Creation = {
     Cell.all.forEach(function(cell) {
       cell.divination();
     });
-    debugger;
     Cell.all.forEach(function(cell) {
       cell.switchState();
     });
@@ -91,9 +85,12 @@ $(document).ready(function() {
     var firmamentSize = $("input#new-creation-number").val();
     if(isNaN(firmamentSize)) {
       alert('You fool! Creation needs a size, not that jibberjabber!');
-    } else if (firmamentSize > 17) {
+    } else if (firmamentSize > 68 ) {
       alert('Just kidding! Pick a smaller number, please and thank you.');
     } else {
+      if (firmamentSize > 30) {
+        alert('Large creations will evolve slowly; if the lag is annoying, dream smaller.');
+      }
       $("#creation-entry").hide();
       $("#creation-form").show();
       $("#recreation-form").show();
@@ -104,14 +101,33 @@ $(document).ready(function() {
         for(var x = 0; x < firmamentSize; x++) {
           var lifeMaybe = Cell.find(x,y);
           if (lifeMaybe.currentState === "alive") {
-            $("#creation-display").append("<img src='http://forums.tapastic.com/assets/emoji/octopus.png'>");
+            $("#creation-display").append("<span class='divineIntervention' id='" + y*100 + x + "'><img src='images/alive.png'></span>");
           } else {
-            $("#creation-display").append("<img src='http://emojisaurus.com/images/emoji/ghost.png'>");  
+            $("#creation-display").append("<span class='divineIntervention' id='" + y*100 + x + "'><img src='images/dedd.png'></span>");  
           }
         }
         $("#creation-display").append("<br/>");
       }
     }
+
+    $(".divineIntervention").click(function() {
+      var cellID = this.id;
+      var y = Math.floor(cellID/1000);
+      var x = cellID % 100;
+      var lifeMaybe = Cell.find(x,y);
+      if (lifeMaybe.currentState === "dedd") {
+        $("#" + cellID).text("");
+        $("#" + cellID).append('<img src="images/alive.png">');
+        lifeMaybe.currentState = "alive";
+      } else {
+        $("#" + cellID).text("");
+        $("#" + cellID).append('<img src="images/dedd.png">');
+        lifeMaybe.currentState = "dedd";  
+      }
+      console.log(cellID);
+      console.log(x +", " + y);
+    });
+
     $("form#creation-form").submit(function(event) { 
       event.preventDefault();
 
@@ -123,9 +139,9 @@ $(document).ready(function() {
         for(var x = 0; x < firmamentSize; x++) {
           var lifeMaybe = Cell.find(x,y);
           if (lifeMaybe.currentState === "alive") {
-            $("#creation-display").append("<img src='http://forums.tapastic.com/assets/emoji/octopus.png'>");
+            $("#creation-display").append("<span class='divineIntervention' id='" + y*100 + x + "'><img src='images/alive.png'></span>");
           } else {
-            $("#creation-display").append("<img src='http://emojisaurus.com/images/emoji/ghost.png'>");  
+            $("#creation-display").append("<span class='divineIntervention' id='" + y*100 + x + "'><img src='images/dedd.png'></span>");  
           }
         }
         $("#creation-display").append("<br/>");
@@ -133,7 +149,23 @@ $(document).ready(function() {
 
       this.reset();
 
-
+      $(".divineIntervention").click(function() {
+      var cellID = this.id;
+      var y = Math.floor(cellID/1000);
+      var x = cellID % 100;
+      var lifeMaybe = Cell.find(x,y);
+      if (lifeMaybe.currentState === "dedd") {
+        $("#" + cellID).text("");
+        $("#" + cellID).append('<img src="images/alive.png">');
+        lifeMaybe.currentState = "alive";
+      } else {
+        $("#" + cellID).text("");
+        $("#" + cellID).append('<img src="images/dedd.png">');
+        lifeMaybe.currentState = "dedd";  
+      }
+      console.log(cellID);
+      console.log(x +", " + y);
+    });
     });
   });
 });
