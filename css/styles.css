@@ -35,3 +35,7 @@ h2 {
   text-align: center;
 }
 
+span {
+  width: 16px;
+  display: inline-block;
+}
